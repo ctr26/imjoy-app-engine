@@ -1,63 +1,129 @@
-# NEW_PACKAGE
+# Deploy ImJoy Engine Server to K8s
 
-This repository serves only as a Python template for new projects.
+Useful links:
+ * k8s cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
-## Create a new repository
+## Set config map
+Modify config-map.yml then load it with the following command:
+```
+kubectl apply -f imjoy-config-map.yml
+```
 
-- Create a [new repository](https://github.com/new) and select `imjoy-team/imjoy-python-template` as template repository.
-- Clone your new repository.
-- Search and replace all occurrences of `NEW_PACKAGE`. Replace `NEW_PACKAGE` with the name of the new repository.
-- Add package requirements in `install_requires` in [`setup.py`](setup.py) and in [`requirements.txt`](requirements.txt) as needed.
-- Update this `README.md` with a description and instructions for your new repository.
+## Create a volume
 
-## Development
+Create a directory, e.g. /mnt/data, then change it in the imjoy-config-map.yml
 
-- Install and set up development environment.
+Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+## Setup dashboard
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+```
 
-  ```sh
-  pip install -r requirements_dev.txt
-  ```
+### Create service account
+```
+kubectl apply -f ../service-account.yml
+kubectl get serviceaccount
+```
 
-  This will install all requirements.
-It will also install this package in development mode, so that code changes are applied immediately without reinstall necessary.
+### Visit dashboard
 
-- Here's a list of development tools we use.
-  - [black](https://pypi.org/project/black/)
-  - [flake8](https://pypi.org/project/flake8/)
-  - [mypy](https://pypi.org/project/mypy/)
-  - [pydocstyle](https://pypi.org/project/pydocstyle/)
-  - [pylint](https://pypi.org/project/pylint/)
-  - [pytest](https://pypi.org/project/pytest/)
-  - [tox](https://pypi.org/project/tox/)
-- It's recommended to use the corresponding code formatter and linters also in your code editor to get instant feedback. A popular editor that can do this is [`vscode`](https://code.visualstudio.com/).
-- Run all tests, check formatting and linting.
+Get the token:
+```
+kubectl get secrets
+kubectl describe secret imjoy-service-account-token-z74fg
+```
 
-  ```sh
-  tox
-  ```
+Run the following command to start the proxy:
+```
+kubectl proxy
+```
 
-- Run a single tox environment.
+Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
 
-  ```sh
-  tox -e lint
-  ```
+And login with the token.
 
-- Reinstall all tox environments.
+### Deploy an ingress controller
 
-  ```sh
-  tox -r
-  ```
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/cloud/deploy.yaml
 
-- Run pytest and all tests.
+# verify the installation
+kubectl get pods -n ingress-nginx \
+  -l app.kubernetes.io/name=ingress-nginx --watch
+```
 
-  ```sh
-  pytest
-  ```
+Detect installed controller version
+```
+POD_NAMESPACE=ingress-nginx
+POD_NAME=$(kubectl get pods -n $POD_NAMESPACE -l app.kubernetes.io/name=ingress-nginx --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
 
-- Run pytest and calculate coverage for the package.
+kubectl exec -it $POD_NAME -n $POD_NAMESPACE -- /nginx-ingress-controller --version
+```
 
-  ```sh
-  pytest --cov-report term-missing --cov=NEW_PACKAGE
-  ```
+Ref: https://kubernetes.github.io/ingress-nginx/deploy/
 
-- Continuous integration is by default supported via [GitHub actions](https://help.github.com/en/actions). GitHub actions is free for public repositories and comes with 2000 free Ubuntu build minutes per month for private repositories.
+
+
+### Debugging with a test pod
+
+```
+kubectl run -it testpod --image=alpine bin/ash --restart=Never --rm
+```
+
+This will allow us to test the pods in the same cluster, e.g.:
+```
+wget imjoy-engine-server
+```
+
+
+### Deploy ImJoy
+
+```
+docker build ./imjoy-engine-server -t imjoy-team/imjoy-engine-server
+docker build ./imjoy-worker -t imjoy-team/imjoy-worker
+```
+
+```
+kubectl apply -f imjoy-engine-server/deployment.yml
+kubectl apply -f imjoy-engine-server/service.yml
+kubectl apply -f ingress.yml
+```
+
+
+Test with a imjoy worker pod
+```
+kubectl run -it testimjoyworker --image=imjoy-team/imjoy-test-worker --image-pull-policy=Never --restart=Never --rm
+```
+You should see the following:
+```
+Generated token: imjoy@eyJhbGci...
+echo: a message
+```
+
+To start an interactive session:
+```
+kubectl run -it testimjoyworker --image=imjoy-team/imjoy-test-worker --image-pull-policy=Never bin/bash --restart=Never --rm
+
+# run in the command prompt
+wget http://imjoy-engine-server
+```
+
+### Support mounting datasets from s3
+
+```
+kubectl apply -f https://raw.githubusercontent.com/IBM/dataset-lifecycle-framework/master/release-tools/manifests/dlf.yaml
+kubectl label namespace default monitor-pods-datasets=enabled
+
+kubectl apply -f example-dataset.yml
+```
+
+Ref: https://github.com/datashim-io/datashim
+
+### [TODO] Mount a persistent volume
+
+```
+kubectl apply -f pv-volume.yml
+```
+
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+

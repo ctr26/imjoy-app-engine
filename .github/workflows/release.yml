@@ -6,6 +6,10 @@ on:
       - main
       - master
 
+defaults:
+  run:
+    working-directory: controller
+
 jobs:
   release:
     name: Release
@@ -46,7 +50,7 @@ jobs:
         with:
           create-tag: false
           version-command: |
-            bash -o pipefail -c "cat NEW_PACKAGE/VERSION | jq -r '.version'"
+            bash -o pipefail -c "cat imjoy_cluster_controller/VERSION | jq -r '.version'"
 
       - name: Push tag
         id: tag-version

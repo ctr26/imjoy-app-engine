@@ -1,6 +1,6 @@
 include LICENSE
 include README.md
-include NEW_PACKAGE/VERSION
+include imjoy_cluster_controller/VERSION
 exclude requirements*.txt
 exclude .*
 exclude pylintrc
