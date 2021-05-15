@@ -50,7 +50,7 @@ jobs:
         with:
           create-tag: false
           version-command: |
-            bash -o pipefail -c "cat imjoy_cluster_controller/VERSION | jq -r '.version'"
+            bash -o pipefail -c "cat imjoy_app_controller/VERSION | jq -r '.version'"
 
       - name: Push tag
         id: tag-version

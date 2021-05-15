@@ -1,6 +1,6 @@
 include LICENSE
 include README.md
-include imjoy_cluster_controller/VERSION
+include imjoy_app_controller/VERSION
 exclude requirements*.txt
 exclude .*
 exclude pylintrc
