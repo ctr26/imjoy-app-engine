@@ -7,11 +7,11 @@ kubectl get pods -n ingress-nginx \
   -l app.kubernetes.io/name=ingress-nginx
 
 # deploy imjoy engine server
-# docker build ./imjoy-engine-server -t imjoy-team/imjoy-engine-server
+# docker build ./imjoy-app-engine -t imjoy-team/imjoy-app-engine
 # docker build ./imjoy-worker -t imjoy-team/imjoy-worker
 
-kubectl apply -f imjoy-engine-server/deployment.yml
-kubectl apply -f imjoy-engine-server/service.yml
+kubectl apply -f imjoy-app-engine/deployment.yml
+kubectl apply -f imjoy-app-engine/service.yml
 kubectl apply -f ingress.yml
 
 

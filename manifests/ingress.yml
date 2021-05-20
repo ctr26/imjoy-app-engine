@@ -19,14 +19,14 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: imjoy-engine-server
+            name: imjoy-app-engine
             port: 
               name: http
       - path: /socket.io
         pathType: Prefix
         backend:
           service:
-            name: imjoy-engine-server
+            name: imjoy-app-engine
             port: 
               name: http
       

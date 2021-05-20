@@ -20,7 +20,7 @@ def start_plugin_pod(config: dict):
         "imjoy-plugin-pod-" + config.get("name", "") + str(random.random())
     )
     name = config.get("name") or "my-plugin"
-    cmd = "python -m imjoy.runner --server-url=http://imjoy-engine-server /src/imjoy_plugin.py"
+    cmd = "python -m imjoy.runner --server-url=http://imjoy-app-engine /src/imjoy_plugin.py"
     workspace = config.get("workspace")
     api_instance = get_api_instance()
 

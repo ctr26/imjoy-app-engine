@@ -189,7 +189,7 @@ def launch_pod(
 if __name__ == "__main__":
     name = "imjoy-plugin-pod"
     plugin_name = "my-plugin"
-    cmd = "python -m imjoy.runner --server-url=http://imjoy-engine-server /home/example_plugin.py --quit-on-ready"
+    cmd = "python -m imjoy.runner --server-url=http://imjoy-app-engine /home/example_plugin.py --quit-on-ready"
     api_instance = get_api_instance()
     workspace = "my-workspace"
     # delete_pods(api_instance, workspace, plugin_name)

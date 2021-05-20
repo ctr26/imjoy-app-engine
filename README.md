@@ -72,20 +72,20 @@ kubectl run -it testpod --image=alpine bin/ash --restart=Never --rm
 
 This will allow us to test the pods in the same cluster, e.g.:
 ```
-wget imjoy-engine-server
+wget imjoy-app-engine
 ```
 
 
 ### Deploy ImJoy
 
 ```
-docker build ./imjoy-engine-server -t imjoy-team/imjoy-engine-server
+docker build ./imjoy-app-engine -t imjoy-team/imjoy-app-engine
 docker build ./imjoy-worker -t imjoy-team/imjoy-worker
 ```
 
 ```
-kubectl apply -f imjoy-engine-server/deployment.yml
-kubectl apply -f imjoy-engine-server/service.yml
+kubectl apply -f imjoy-app-engine/deployment.yml
+kubectl apply -f imjoy-app-engine/service.yml
 kubectl apply -f ingress.yml
 ```
 
@@ -105,7 +105,7 @@ To start an interactive session:
 kubectl run -it testimjoyworker --image=imjoy-team/imjoy-test-worker --image-pull-policy=Never bin/bash --restart=Never --rm
 
 # run in the command prompt
-wget http://imjoy-engine-server
+wget http://imjoy-app-engine
 ```
 
 ### Support mounting datasets from s3

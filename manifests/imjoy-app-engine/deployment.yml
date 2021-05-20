@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: imjoy-engine-server
+  name: imjoy-app-engine
   labels:
-    app: imjoy-engine-server
+    app: imjoy-app-engine
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: imjoy-engine-server
+      app: imjoy-app-engine
   template:
     metadata:
       labels:
-        app: imjoy-engine-server
+        app: imjoy-app-engine
     spec:
       containers:
-        - name: imjoy-engine-server
-          image: imjoy-team/imjoy-engine-server
+        - name: imjoy-app-engine
+          image: imjoy-team/imjoy-app-engine
           imagePullPolicy: Never
           env:
             - name: AUTH0_DOMAIN
