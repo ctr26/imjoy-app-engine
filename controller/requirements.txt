@@ -1,2 +1,2 @@
-kubernetes
-imjoy
+kubernetes==12.0.1
+imjoy==0.11.10

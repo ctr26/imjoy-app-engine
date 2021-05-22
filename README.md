@@ -1,13 +1,7 @@
-# Deploy ImJoy Engine Server to K8s
+# Deploy ImJoy App Engine Server to K8s
 
 Useful links:
  * k8s cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
-
-## Set config map
-Modify config-map.yml then load it with the following command:
-```
-kubectl apply -f imjoy-config-map.yml
-```
 
 ## Create a volume
 
@@ -54,7 +48,7 @@ kubectl get pods -n ingress-nginx \
 
 Detect installed controller version
 ```
-POD_NAMESPACE=ingress-nginx
+POD_NAMESPACE=default
 POD_NAME=$(kubectl get pods -n $POD_NAMESPACE -l app.kubernetes.io/name=ingress-nginx --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
 
 kubectl exec -it $POD_NAME -n $POD_NAMESPACE -- /nginx-ingress-controller --version
@@ -64,31 +58,23 @@ Ref: https://kubernetes.github.io/ingress-nginx/deploy/
 
 
 
-### Debugging with a test pod
-
-```
-kubectl run -it testpod --image=alpine bin/ash --restart=Never --rm
-```
-
-This will allow us to test the pods in the same cluster, e.g.:
-```
-wget imjoy-app-engine
-```
-
-
 ### Deploy ImJoy
 
+Build docker image
 ```
 docker build ./imjoy-app-engine -t imjoy-team/imjoy-app-engine
 docker build ./imjoy-worker -t imjoy-team/imjoy-worker
 ```
 
+Install
 ```
-kubectl apply -f imjoy-app-engine/deployment.yml
-kubectl apply -f imjoy-app-engine/service.yml
-kubectl apply -f ingress.yml
+helm install imjoy-app-engine ./helm-chart
 ```
+Upgrade
 
+```
+helm upgrade imjoy-app-engine ./helm-chart
+```
 
 Test with a imjoy worker pod
 ```
@@ -108,6 +94,20 @@ kubectl run -it testimjoyworker --image=imjoy-team/imjoy-test-worker --image-pul
 wget http://imjoy-app-engine
 ```
 
+
+
+
+### Debugging with a test pod
+
+```
+kubectl run -it testpod --image=alpine bin/ash --restart=Never --rm
+```
+
+This will allow us to test the pods in the same cluster, e.g.:
+```
+wget imjoy-app-engine
+```
+
 ### Support mounting datasets from s3
 
 ```
@@ -118,12 +118,4 @@ kubectl apply -f example-dataset.yml
 ```
 
 Ref: https://github.com/datashim-io/datashim
-
-### [TODO] Mount a persistent volume
-
-```
-kubectl apply -f pv-volume.yml
-```
-
-https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
 

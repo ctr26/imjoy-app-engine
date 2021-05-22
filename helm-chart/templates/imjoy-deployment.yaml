@@ -6,7 +6,7 @@ metadata:
   labels:
     app: imjoy-app-engine
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: imjoy-app-engine
@@ -23,27 +23,27 @@ spec:
             - name: AUTH0_DOMAIN
               valueFrom:
                 configMapKeyRef:
-                  name: imjoy-config-map
+                  name: {{ .Release.Name }}-config
                   key: AUTH0_DOMAIN
             - name: AUTH0_AUDIENCE
               valueFrom:
                 configMapKeyRef:
-                  name: imjoy-config-map
+                  name: {{ .Release.Name }}-config
                   key: AUTH0_AUDIENCE
             - name: ALLOW_ORIGINS
               valueFrom:
                 configMapKeyRef:
-                  name: imjoy-config-map
+                  name: {{ .Release.Name }}-config
                   key: ALLOW_ORIGINS
             - name: JWT_SECRET
               valueFrom:
                 configMapKeyRef:
-                  name: imjoy-config-map
+                  name: {{ .Release.Name }}-config
                   key: JWT_SECRET
             - name: ADMINS
               valueFrom:
                 configMapKeyRef:
-                  name: imjoy-config-map
+                  name: {{ .Release.Name }}-config
                   key: ADMINS
             - name: ALLOW_LIST
               value: ""

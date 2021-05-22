@@ -1,0 +1,16 @@
+# Default values for imjoy-app-engine.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+acmeEmail: "oeway007@gmail.com"
+JWT_SECRET: F3eckV4uR5Q7KfNP3FqTVGuQA3wjeGAm
+ALLOW_ORIGINS: "*"
+AUTH0_AUDIENCE: https://imjoy.eu.auth0.com/api/v2/
+AUTH0_DOMAIN: imjoy.eu.auth0.com
+ADMINS: "oeway007@gmail.com"
+MINIO_ACCESS_KEY: imjoy
+MINIO_SECRET_KEY: Nbj2cbcUDGGy7QNS8RjCwMrNRXrp2Ms7UXeF
+minioStorage: 1Gi
+

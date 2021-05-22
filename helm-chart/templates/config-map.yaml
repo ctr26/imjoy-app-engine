@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  JWT_SECRET: {{ .Values.JWT_SECRET | quote }}
+  ALLOW_ORIGINS: {{ .Values.ALLOW_ORIGINS | quote }}
+  AUTH0_AUDIENCE: {{ .Values.AUTH0_AUDIENCE | quote }}
+  AUTH0_DOMAIN:  {{ .Values.AUTH0_DOMAIN | quote }}
+  ADMINS:  {{ .Values.ADMINS | quote }}
