@@ -27,7 +27,7 @@ jobs:
           context: ./controller
           push: true
           tags: |
-            ${{ github.repository }}:${{ github.sha }}
+            imjoy/imjoy-app-controller:${{ github.sha }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -47,4 +47,4 @@ jobs:
           export HELM_PLATFORM=linux-amd64 && export HELM_VERSION=helm-v3.5.2
           wget https://get.helm.sh/$HELM_VERSION-$HELM_PLATFORM.tar.gz && tar -xvzf $HELM_VERSION-$HELM_PLATFORM.tar.gz && rm -rf $HELM_VERSION-$HELM_PLATFORM.tar.gz && mv $HELM_PLATFORM/helm $GOBIN/helm3 && chmod +x $GOBIN/helm3
           helm3 init && helm3 repo update
-          helm install --set engineImage=${{ github.repository }}:${{ github.sha }} imjoy-app-engine ./helm-chart/
+          helm install --set engineImage=imjoy/imjoy-app-controller:${{ github.sha }} imjoy-app-engine ./helm-chart/
