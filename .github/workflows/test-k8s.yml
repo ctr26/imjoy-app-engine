@@ -2,7 +2,7 @@ name: "Create cluster using KinD"
 on: [pull_request, push]
 
 jobs:
-  docker:
+  test-k8s:
     runs-on: ubuntu-latest
     steps:
       -
