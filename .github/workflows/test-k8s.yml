@@ -17,6 +17,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Check out the repo
+        uses: actions/checkout@v2
       -
         name: Build and push
         id: docker_build
@@ -30,8 +32,6 @@ jobs:
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
     
-      - name: Check out the repo
-        uses: actions/checkout@v2
       - uses: engineerd/setup-kind@v0.5.0
       - name: Testing K8S
         run: |
