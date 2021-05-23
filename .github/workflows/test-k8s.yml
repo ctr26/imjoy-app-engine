@@ -25,9 +25,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./controller
-          push: true
+          push: false
           tags: |
-            imjoy/imjoy-app-controller:${{ github.sha }}
+            imjoy/imjoy-app-controller:${{ github.sha }} 
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -41,13 +41,16 @@ jobs:
           kubectl get pods -n kube-system
           echo "current-context:" $(kubectl config current-context)
           echo "environment-kubeconfig:" ${KUBECONFIG}
+
+      - name: Load local docker image
+        run: kind load docker-image imjoy/imjoy-app-controller:${{ github.sha }}
   
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.5.2
   
-      - name: test helm
+      - name: Test helm chart
         run: |
           helm install --wait --set engineImage=imjoy/imjoy-app-controller:${{ github.sha }} imjoy-app-engine ./charts/imjoy-app-engine/
           helm test imjoy-app-engine
