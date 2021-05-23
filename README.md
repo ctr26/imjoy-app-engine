@@ -68,12 +68,12 @@ docker build ./imjoy-worker -t imjoy-team/imjoy-worker
 
 Install
 ```
-helm install imjoy-app-engine ./helm-chart
+helm install imjoy-app-engine ./charts/imjoy-app-engine/
 ```
 Upgrade
 
 ```
-helm upgrade imjoy-app-engine ./helm-chart
+helm upgrade imjoy-app-engine ./charts/imjoy-app-engine/
 ```
 
 Test with a imjoy worker pod

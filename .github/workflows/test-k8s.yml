@@ -41,15 +41,14 @@ jobs:
           kubectl get pods -n kube-system
           echo "current-context:" $(kubectl config current-context)
           echo "environment-kubeconfig:" ${KUBECONFIG}
-      - name: setup helm
+  
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.5.2
+  
+      - name: test helm
         run: |
-          export GOBIN=$(go env GOPATH)/bin
-          export PATH=$PATH:$GOBIN
-          mkdir -p $GOBIN
-          export HELM_PLATFORM=linux-amd64 && export HELM_VERSION=helm-v3.5.2
-          wget https://get.helm.sh/$HELM_VERSION-$HELM_PLATFORM.tar.gz && tar -xvzf $HELM_VERSION-$HELM_PLATFORM.tar.gz && rm -rf $HELM_VERSION-$HELM_PLATFORM.tar.gz && mv $HELM_PLATFORM/helm $GOBIN/helm3 && chmod +x $GOBIN/helm3
-          helm3 install --wait --set engineImage=imjoy/imjoy-app-controller:${{ github.sha }} imjoy-app-engine ./helm-chart/
+          helm install --wait --set engineImage=imjoy/imjoy-app-controller:${{ github.sha }} imjoy-app-engine ./charts/imjoy-app-engine/
+          helm test imjoy-app-engine
           kubectl get pods --all-namespaces
-          helm3 test imjoy-app-engine
-          kubectl get pods --all-namespaces
-          
