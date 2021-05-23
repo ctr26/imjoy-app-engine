@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: imjoy-app-engine
-          image: imjoy-team/imjoy-app-engine
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
+          image: {{ .Values.engineImage }}
           env:
             - name: AUTH0_DOMAIN
               valueFrom:

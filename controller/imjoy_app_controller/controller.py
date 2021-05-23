@@ -81,6 +81,14 @@ def delete_pods(api_instance, workspace, plugin_name, namespace="default"):
                 "Exception when calling CoreV1Api->delete_namespaced_pod: %s\n", e
             )
 
+def list_pods(api_instance, workspace):
+    pods = api_instance.list_namespaced_pod(
+        namespace,
+        label_selector=f"plugin={plugin_name},workspace={workspace}",
+        watch=False,
+    )
+    return pods
+
 
 def launch_pod(
     api_instance,
@@ -128,7 +136,7 @@ def launch_pod(
                     "image": image,
                     "name": "imjoy-plugin-worker",
                     "args": [c for c in command.split(" ") if c.strip()],
-                    "imagePullPolicy": "Never",
+                    "imagePullPolicy": "IfNotPresent",
                     "volumeMounts": [
                         {"name": "src", "mountPath": "/src", "readOnly": True}
                     ],
