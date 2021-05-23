@@ -13,5 +13,6 @@ spec:
         - python3
         - -c
         - |
-          from imjoy_app_controller.__main__ import start_plugin_pod;start_plugin_pod({})
+          from imjoy_app_controller.__main__ import start_plugin_pod
+          start_plugin_pod({})
   restartPolicy: Never
