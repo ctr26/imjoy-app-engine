@@ -2,5 +2,5 @@ dependencies:
 - name: docker-registry-mirror
   repository: https://t83714.github.io/docker-registry-mirror
   version: 1.10.3
-digest: sha256:03401be79699687058aea4aa866258c6c7ec45065dd77b4ea147bab789eaaf86
-generated: "2021-05-24T15:25:27.842605+02:00"
+digest: sha256:c3596fa720aa935cba1490af4bef26eba8c2132eadd570e052ffe65d41b3e723
+generated: "2021-05-24T18:25:58.614685+02:00"
