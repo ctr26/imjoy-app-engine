@@ -19,22 +19,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Check out the repo
         uses: actions/checkout@v2
-      -
-        name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./controller
-          # only push the image if it's on master branch
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-          tags: |
-            imjoy/imjoy-app-controller:latest
-            imjoy/imjoy-app-controller:${{ github.sha }} 
-
+  
       - uses: engineerd/setup-kind@v0.5.0
         with:
           version: "v0.11.0"
-      - name: Testing K8S
+  
+      - name: Check K8s
         run: |
           kubectl cluster-info
           kubectl get pods -n kube-system
@@ -45,9 +35,29 @@ jobs:
         uses: azure/setup-helm@v1
         with:
           version: v3.5.2
-  
-      - name: Test helm chart
+
+      - name: Setup docker registry # not all the pods will run by now
         run: |
-          helm install --wait --set engineImage=${{ steps.docker_build.outputs.digest }} imjoy-app-engine ./charts/imjoy-app-engine/
+          helm dependency build ./charts/imjoy-app-engine
+          helm install --wait --set service.type=NodePort --set engineImage=imjoy-app-engine ./charts/imjoy-app-engine/
+
+      - name: Build docker image
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./controller
+          # only push the image if it's on master branch
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+          tags: |
+            imjoy/imjoy-app-engine:latest
+            localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }} 
+      
+      - name: Inspect
+        run: |
+          docker buildx imagetools inspect localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }}
+
+      - name: Install and test helm chart
+        run: |
+          helm upgrade --wait --set service.type=NodePort --set dockerImage=imjoy-app-engine ./charts/imjoy-app-engine/
           helm test imjoy-app-engine
           kubectl get pods --all-namespaces

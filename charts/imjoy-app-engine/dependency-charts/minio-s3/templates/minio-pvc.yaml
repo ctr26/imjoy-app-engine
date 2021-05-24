@@ -13,4 +13,4 @@ spec:
   resources:
     # This is the request for storage. Should be available in the cluster.
     requests:
-      storage: {{ .Values.minioStorage }}
+      storage: {{ .Values.minioStorageSize }}

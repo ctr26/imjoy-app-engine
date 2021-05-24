@@ -12,10 +12,10 @@ LONG_DESCRIPTION = README_FILE.read_text(encoding="utf-8")
 VERSION_FILE = ROOT_DIR / "imjoy_app_controller" / "VERSION"
 VERSION = json.loads(VERSION_FILE.read_text())["version"]
 
-REQUIRES = ["kubernetes", "imjoy>=0.11.10"]
+REQUIRES = ["kubernetes", "imjoy>=0.11.12"]
 
 setup(
-    name="imjoy-cluster-controller",
+    name="imjoy-app-controller",
     version=VERSION,
     url="https://github.com/imjoy-team/imjoy-engine-cluster",
     author="ImJoy-Team",
@@ -29,6 +29,7 @@ setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.6",
     install_requires=REQUIRES,
+    entry_points={'imjoy_core_server_extension': 'imjoy_app_controller=imjoy_app_controller.__main__:setup_extension'},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",

@@ -7,8 +7,8 @@ metadata:
 spec:
   storageClassName: standard
   capacity:
-    storage: {{ .Values.minioStorage }}
+    storage: {{ .Values.minioStorageSize }}
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+    path: {{ .Values.minioStoragePath | quote }}

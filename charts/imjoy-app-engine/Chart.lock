@@ -1,0 +1,12 @@
+dependencies:
+- name: imjoy-core-server
+  repository: file://dependency-charts/imjoy-core-server
+  version: 0.1.0
+- name: minio-s3
+  repository: file://dependency-charts/minio-s3
+  version: 0.1.0
+- name: docker-registry-mirror
+  repository: https://t83714.github.io/docker-registry-mirror
+  version: 1.10.3
+digest: sha256:fc4737f24ccc52d982aa2c5f29452c9551766a67b3d126442017a377bd3c98f6
+generated: "2021-05-24T01:03:16.686703+02:00"

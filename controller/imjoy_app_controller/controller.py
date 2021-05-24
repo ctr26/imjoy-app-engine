@@ -81,7 +81,7 @@ def delete_pods(api_instance, workspace, plugin_name, namespace="default"):
                 "Exception when calling CoreV1Api->delete_namespaced_pod: %s\n", e
             )
 
-def list_pods(api_instance, workspace):
+def list_pods(api_instance, workspace, namespace="default"):
     pods = api_instance.list_namespaced_pod(
         namespace,
         label_selector=f"plugin={plugin_name},workspace={workspace}",

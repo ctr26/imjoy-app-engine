@@ -2,18 +2,18 @@ apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and befor
 kind: Deployment
 metadata:
   # This name uniquely identifies the Deployment
-  name: minio-deployment
+  name: minio-s3
 spec:
   selector:
     matchLabels:
-      app: minio
+      app: minio-s3
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         # Label is used as selector in the service.
-        app: minio
+        app: minio-s3
     spec:
       # Refer to the PVC created earlier
       volumes:
@@ -22,21 +22,19 @@ spec:
           # Name of the PVC created earlier
           claimName: minio-pv-claim
       containers:
-      - name: minio
+      - name: minio-s3
         # Pulls the default Minio image from Docker Hub
         image: minio/minio:latest
-        args:
-        - server
-        - /storage
+        command: ["/bin/sh"]
+        args: ["-c", "mkdir -p /storage/docker-registry && /usr/bin/minio server /storage"]
         env:
         # Minio access key and secret key
         - name: MINIO_ACCESS_KEY
-          value: {{ .Values.MINIO_ACCESS_KEY }}
+          value: {{ .Values.minioAccessKey }}
         - name: MINIO_SECRET_KEY
-          value:  {{ .Values.MINIO_SECRET_KEY }}
+          value:  {{ .Values.minioSecretKey }}
         ports:
         - containerPort: 9000
-          hostPort: 9000
         # Mount the volume into the pod
         volumeMounts:
         - name: storage # must match the volume name, above
