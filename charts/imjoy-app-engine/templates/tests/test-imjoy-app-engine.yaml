@@ -14,5 +14,16 @@ spec:
         - -c
         - |
           from imjoy_app_controller.__main__ import start_plugin_pod
-          start_plugin_pod({})
+          try:
+            print('starting plugin pod...')
+            start_plugin_pod({"workspace": "test", "name": "test-plugin"})
+            print('plugin pod started.')
+          except Exception:
+            print('failed to start plugin pod.')
+            raise
+          finally:
+            print('removing plugin pod...')
+            stop_plugin_pod({"workspace": "test", "name": "test-plugin"})
+            print('plugin pod removed.')
+
   restartPolicy: Never

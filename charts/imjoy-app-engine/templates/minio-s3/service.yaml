@@ -6,6 +6,7 @@ metadata:
   labels:
       app: minio-s3
 spec:
+  type: {{ .Values.service.type }}
   selector:
     app: minio-s3
   ports:

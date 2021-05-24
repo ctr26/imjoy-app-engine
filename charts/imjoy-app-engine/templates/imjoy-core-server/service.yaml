@@ -6,6 +6,7 @@ metadata:
   labels:
       app: imjoy-core-server
 spec:
+  type: {{ .Values.service.type }}
   selector:
     app: imjoy-core-server
   ports:

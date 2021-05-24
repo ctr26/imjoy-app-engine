@@ -2,5 +2,8 @@ dependencies:
 - name: docker-registry-mirror
   repository: https://t83714.github.io/docker-registry-mirror
   version: 1.10.3
-digest: sha256:c3596fa720aa935cba1490af4bef26eba8c2132eadd570e052ffe65d41b3e723
-generated: "2021-05-24T18:25:58.614685+02:00"
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.3.1
+digest: sha256:bb886236a55d85c40bd13f65f507b7114d7c54115d9ab0692a41e15ded096d9f
+generated: "2021-05-24T20:36:17.998338+02:00"

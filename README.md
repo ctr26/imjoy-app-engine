@@ -119,3 +119,8 @@ kubectl apply -f example-dataset.yml
 
 Ref: https://github.com/datashim-io/datashim
 
+
+## Delete all the imjoy plugin runner pods
+```bash
+kubectl delete pod -l type=imjoy-plugin-runner
+```

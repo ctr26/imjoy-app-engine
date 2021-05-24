@@ -4,24 +4,30 @@ kind: Ingress
 metadata:
   name: imjoy-ingress
   annotations:
-    # nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1 # Lets us rewrite example.com/something/hello to example.com/hello
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.org/websocket-services: "websockettest-cluster-ip-service"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    # cert-manager.io/issuer: "letsencrypt-staging"
 
 spec:
   ingressClassName: nginx
   rules:
   - http:
       paths:
-      - path: "{{- required "A valid .Values.imjoyCoreServer.basePath required!" .Values.imjoyCoreServer.basePath }}"
+      - path: /engine/?(.*)
         pathType: Prefix
         backend:
           service:
             name: imjoy-core-server
             port: 
               name: http
-      - path: /
+      - path: /(.*)
         pathType: Prefix
         backend:
           service:

@@ -5,6 +5,12 @@ replicaCount: 1
 acmeEmail: "oeway007@gmail.com"
 dockerImage: imjoy/imjoy-app-engine
 
+service:
+  type: ClusterIP
+
+certManager:
+  enabled: false
+
 minioS3:
   enabled: true
   minioAccessKey: imjoy
@@ -14,7 +20,7 @@ minioS3:
 
 imjoyCoreServer:
   enabled: true
-  basePath: /engine
+  basePath: /
   replicaCount: 1
   jwtSecret: F3eckV4uR5Q7KfNP3FqTVGuQA3wjeGAm
   allowOrigins: "*"
