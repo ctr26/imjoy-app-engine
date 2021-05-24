@@ -4,12 +4,11 @@ kind: Service
 metadata:
   name: minio-s3
 spec:
-  type: LoadBalancer
+  selector:
+    app: minio-s3
   ports:
     - port: 9000
       targetPort: 9000
       protocol: TCP
       name: http
-  selector:
-    app: minio-s3
 {{- end }}
