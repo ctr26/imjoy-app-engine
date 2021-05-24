@@ -35,7 +35,9 @@ spec:
         - name: MINIO_SECRET_KEY
           value:  {{ .Values.minioS3.minioSecretKey }}
         ports:
-        - containerPort: 9000
+          - name: http
+            containerPort: 9000
+            protocol: TCP
         # Mount the volume into the pod
         volumeMounts:
         - name: storage # must match the volume name, above

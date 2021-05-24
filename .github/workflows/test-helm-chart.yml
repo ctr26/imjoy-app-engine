@@ -38,6 +38,7 @@ jobs:
 
       - name: Setup docker registry # skip the imjoy core server for now
         run: |
+          helm lint imjoy-app-engine ./charts/imjoy-app-engine
           helm dependency update ./charts/imjoy-app-engine
           helm install --wait --timeout 10m --debug --set service.type=NodePort --set imjoyCoreServer.enabled=false imjoy-app-engine ./charts/imjoy-app-engine/
 

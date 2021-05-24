@@ -14,7 +14,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /engine
+      - path: "{{- required "A valid .Values.imjoyCoreServer.basePath required!" .Values.imjoyCoreServer.basePath }}"
         pathType: Prefix
         backend:
           service:
