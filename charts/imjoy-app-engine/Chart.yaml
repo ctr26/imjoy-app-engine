@@ -24,20 +24,20 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 dependencies:
-  - name: imjoy-core-server
-    version: "0.1.0"
-    condition: imjoyCoreServer.enabled
-    repository: "file://dependency-charts/imjoy-core-server"
+  # - name: imjoy-core-server
+  #   version: "0.1.0"
+  #   condition: imjoyCoreServer.enabled
+  #   repository: "file://dependency-charts/imjoy-core-server"
   # - name: imjoy-app-controller
   #   version: "0.1.0"
   #   condition: imjoyAppController.enabled
   #   repository: "file://dependency-charts/imjoy-app-controller"
-  - name: minio-s3
-    version: "0.1.0"
-    condition: minioS3.enabled
-    repository: "file://dependency-charts/minio-s3"
+  # - name: minio-s3
+  #   version: "0.1.0"
+  #   condition: minioS3.enabled
+  #   repository: "file://dependency-charts/minio-s3"
   - name: docker-registry-mirror
-    condition: dockerRegistry.enabled
+    condition: docker-registry-mirror.enabled
     version: "1.10.3"
     repository: https://t83714.github.io/docker-registry-mirror
   # - name: nginx-ingress

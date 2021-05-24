@@ -68,7 +68,7 @@ def setup_extension(imjoy_api):
             "visibility": visibility,  # protected or public
         }
     )
-    ws.register_service(
+    ws['register_service'](
         {
             "name": "Plugin Pod Launcher",
             "type": "#plugin-pod-launcher",

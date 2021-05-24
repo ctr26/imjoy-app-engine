@@ -12,7 +12,7 @@ LONG_DESCRIPTION = README_FILE.read_text(encoding="utf-8")
 VERSION_FILE = ROOT_DIR / "imjoy_app_controller" / "VERSION"
 VERSION = json.loads(VERSION_FILE.read_text())["version"]
 
-REQUIRES = ["kubernetes", "imjoy>=0.11.12"]
+REQUIRES = ["kubernetes", "imjoy>=0.11.15"]
 
 setup(
     name="imjoy-app-controller",

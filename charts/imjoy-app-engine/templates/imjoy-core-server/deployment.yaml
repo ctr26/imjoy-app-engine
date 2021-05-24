@@ -1,4 +1,4 @@
----
+{{- if .Values.imjoyCoreServer.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     app: imjoy-core-server
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.imjoyCoreServer.replicaCount }}
   selector:
     matchLabels:
       app: imjoy-core-server
@@ -18,20 +18,20 @@ spec:
       containers:
         - name: imjoy-core-server
           imagePullPolicy: IfNotPresent
-          image: {{ .Values.global.dockerImage }}
+          image: {{ .Values.dockerImage | quote }}
           command: ["python3"]
-          args: ["-m", "imjoy", "--serve", "--port=4000", "--host=0.0.0.0", "--allow-origin='*'"]
+          args: ["-m", "imjoy", "--serve", "--port=4000", "--base-path=/engine", "--host=0.0.0.0", "--allow-origin='*'"]
           env:
             - name: AUTH0_DOMAIN
-              value: {{ .Values.auth0Domain | quote }}
+              value: {{ .Values.imjoyCoreServer.auth0Domain | quote }}
             - name: AUTH0_AUDIENCE
-              value: {{ .Values.auth0Audience | quote }}
+              value: {{ .Values.imjoyCoreServer.auth0Audience | quote }}
             - name: ALLOW_ORIGINS
-              value: {{ .Values.allowOrigins | quote }}
+              value: {{ .Values.imjoyCoreServer.allowOrigins | quote }}
             - name: JWT_SECRET
-              value: {{ .Values.jwtSecret | quote }}
+              value: {{ .Values.imjoyCoreServer.jwtSecret | quote }}
             - name: ADMINS
-              value: {{ .Values.admins | quote }}
+              value: {{ .Values.imjoyCoreServer.admins | quote }}
             - name: ALLOW_LIST
               value: ""
             - name: VISIBILITY
@@ -52,15 +52,16 @@ spec:
               cpu: 1
               memory: 512Mi
           livenessProbe:
-            failureThreshold: 3
+            failureThreshold: 10
             httpGet:
               path: /liveness
               port: http
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 15
             periodSeconds: 10
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
+{{- end }}

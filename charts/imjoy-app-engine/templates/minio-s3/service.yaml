@@ -1,3 +1,4 @@
+{{- if .Values.minioS3.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,3 +12,4 @@ spec:
       name: http
   selector:
     app: minio-s3
+{{- end }}

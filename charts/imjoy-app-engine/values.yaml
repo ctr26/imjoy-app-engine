@@ -3,25 +3,18 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 acmeEmail: "oeway007@gmail.com"
+dockerImage: imjoy/imjoy-app-engine
 
 minioS3:
   enabled: true
-minio-s3:
   minioAccessKey: imjoy
   minioSecretKey: Nbj2cbcUDGGy7QNS8RjCwMrNRXrp2Ms7UXeF
   minioStorageSize: 2Gi
   minioStoragePath: /Users/wei.ouyang/s3
 
-
-# imjoyAppController:
-#   enabled: false
-# imjoy-app-controller:
-#   admins: "oeway007@gmail.com"
-
-
 imjoyCoreServer:
   enabled: true
-imjoy-core-server:
+  replicaCount: 1
   jwtSecret: F3eckV4uR5Q7KfNP3FqTVGuQA3wjeGAm
   allowOrigins: "*"
   auth0Audience: https://imjoy.eu.auth0.com/api/v2/
@@ -29,9 +22,8 @@ imjoy-core-server:
   admins: "oeway007@gmail.com"
 
 
-dockerRegistry:
-  enabled: true
 docker-registry-mirror:
+  enabled: true
   storage: s3
   secrets:
     s3:
@@ -45,7 +37,3 @@ docker-registry-mirror:
   service:
     port: 5000
     nodePort: 31822 # only valid when using NodePort
-
-
-global: # visible to all charts including subcharts
-  dockerImage: imjoy/imjoy-app-engine

@@ -36,10 +36,10 @@ jobs:
         with:
           version: v3.5.2
 
-      - name: Setup docker registry # not all the pods will run by now
+      - name: Setup docker registry # skip the imjoy core server for now
         run: |
           helm dependency build ./charts/imjoy-app-engine
-          helm install --wait --set service.type=NodePort --set engineImage=imjoy-app-engine ./charts/imjoy-app-engine/
+          helm install --wait --set service.type=NodePort --set imjoyCoreServer.enabled=false ./charts/imjoy-app-engine/
 
       - name: Build docker image
         id: docker_build
@@ -56,8 +56,8 @@ jobs:
         run: |
           docker buildx imagetools inspect localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }}
 
-      - name: Install and test helm chart
+      - name: Install and test helm chart # now we can start the imjoy core server
         run: |
-          helm upgrade --wait --set service.type=NodePort --set dockerImage=imjoy-app-engine ./charts/imjoy-app-engine/
+          helm upgrade --wait --set service.type=NodePort --set imjoyCoreServer.enabled=true --set dockerImage=localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }} ./charts/imjoy-app-engine/
           helm test imjoy-app-engine
           kubectl get pods --all-namespaces

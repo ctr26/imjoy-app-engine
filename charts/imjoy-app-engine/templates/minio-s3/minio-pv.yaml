@@ -1,3 +1,4 @@
+{{- if .Values.minioS3.enabled }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -7,8 +8,9 @@ metadata:
 spec:
   storageClassName: standard
   capacity:
-    storage: {{ .Values.minioStorageSize }}
+    storage: {{ .Values.minioS3.minioStorageSize }}
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: {{ .Values.minioStoragePath | quote }}
+    path: {{ .Values.minioS3.minioStoragePath | quote }}
+{{- end }}
