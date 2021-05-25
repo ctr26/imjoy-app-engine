@@ -36,11 +36,11 @@ jobs:
         with:
           version: v3.5.2
 
-      - name: Setup docker registry # skip the imjoy core server for now
-        run: |
-          helm dependency update ./charts/imjoy-app-engine
-          helm lint ./charts/imjoy-app-engine
-          helm install --wait --timeout 10m --debug --set service.type=NodePort --set imjoyCoreServer.enabled=false imjoy-app-engine ./charts/imjoy-app-engine/
+      # - name: Setup docker registry # skip the imjoy core server for now
+      #   run: |
+      #     helm dependency update ./charts/imjoy-app-engine
+      #     helm lint ./charts/imjoy-app-engine
+      #     helm install --wait --timeout 10m --debug --set service.type=NodePort --set imjoyCoreServer.enabled=false imjoy-app-engine ./charts/imjoy-app-engine/
 
       - name: Build docker image
         id: docker_build
@@ -48,17 +48,17 @@ jobs:
         with:
           context: ./controller
           # only push the image if it's on master branch
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+          push: true # ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           tags: |
             imjoy/imjoy-app-engine:latest
-            localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }} 
+            imjoy/imjoy-app-engine:${{ github.sha }} 
       
-      - name: Inspect
-        run: |
-          docker buildx imagetools inspect localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }}
+      # - name: Inspect
+      #   run: |
+      #     docker buildx imagetools inspect localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }}
 
       - name: Install and test helm chart # now we can start the imjoy core server
         run: |
-          helm upgrade --wait --debug --set service.type=NodePort --set imjoyCoreServer.enabled=true --set dockerImage=localhost:31822/imjoy/imjoy-app-engine:${{ github.sha }} imjoy-app-engine ./charts/imjoy-app-engine/
+          helm upgrade --wait --debug --set service.type=NodePort --set imjoyCoreServer.enabled=true --set dockerImage=imjoy/imjoy-app-engine:${{ github.sha }} imjoy-app-engine ./charts/imjoy-app-engine/
           helm test imjoy-app-engine
           kubectl get pods --all-namespaces
