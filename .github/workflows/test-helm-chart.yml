@@ -59,6 +59,6 @@ jobs:
 
       - name: Install and test helm chart # now we can start the imjoy core server
         run: |
-          helm upgrade --wait --debug --set service.type=NodePort --set imjoyCoreServer.enabled=true --set dockerImage=imjoy/imjoy-app-engine:${{ github.sha }} imjoy-app-engine ./charts/imjoy-app-engine/
+          helm install --wait --debug --set service.type=NodePort --set imjoyCoreServer.enabled=true --set dockerImage=imjoy/imjoy-app-engine:${{ github.sha }} imjoy-app-engine ./charts/imjoy-app-engine/
           helm test imjoy-app-engine
           kubectl get pods --all-namespaces
