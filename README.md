@@ -124,3 +124,30 @@ Ref: https://github.com/datashim-io/datashim
 ```bash
 kubectl delete pod -l type=imjoy-plugin-runner
 ```
+
+
+## Setup ingress
+
+
+Make sure in the ingress.yaml file we have `spec.ingressClassName: public`.
+
+Ref: https://stackoverflow.com/a/67041204
+
+
+## Setup cert-manager
+
+Run the following command
+```
+kubectl get certificate
+```
+
+It should produce:
+```
+NAME                   READY   SECRET                 AGE
+imjoy-app-engine-tls   True    imjoy-app-engine-tls   2m53s
+```
+
+For more details run:
+```
+kubectl describe certificate imjoy-app-engine-tls
+```

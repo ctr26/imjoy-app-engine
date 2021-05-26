@@ -4,19 +4,28 @@
 replicaCount: 1
 acmeEmail: "oeway007@gmail.com"
 dockerImage: imjoy/imjoy-app-engine
-
+certSecretName: imjoy-app-engine-tls
+imjoyHostName: europa.scilifelab.se
+productionMode: false # using `letsencrypt-prod` if set to true
 service:
   type: ClusterIP
 
+ingressController:
+  tag: "v0.44.0"
+  extraArgs: "- --publish-status-address=127.0.0.1"
+  defaultCert: "- ' '"
+
 certManager:
-  enabled: false
+  enabled: true
+cert-manager:
+  installCRDs: false
 
 minioS3:
   enabled: true
   minioAccessKey: imjoy
   minioSecretKey: Nbj2cbcUDGGy7QNS8RjCwMrNRXrp2Ms7UXeF
   minioStorageSize: 2Gi
-  minioStoragePath: /Users/wei.ouyang/s3
+  minioStoragePath: /data/s3
 
 imjoyCoreServer:
   enabled: true
@@ -28,6 +37,25 @@ imjoyCoreServer:
   auth0Domain: imjoy.eu.auth0.com
   admins: "oeway007@gmail.com"
 
+# nginx-ingress:
+#   controller:
+#     hostPort:
+#       enabled: false
+#       ports:
+#         http: 80
+#         https: 443
+#     service:
+#       type: NodePort
+#       nodePorts:
+#         http: 32080
+#         https: 32443
+    #   tcp:
+    #     8080: 32808
+      # hostPort:
+      #   enabled: true
+      #   ports:
+      #     http: 80
+      #     https: 443
 
 docker-registry-mirror:
   enabled: true
