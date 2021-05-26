@@ -98,7 +98,7 @@ def launch_pod(
     command,
     source_files,
     extra_commands=None,
-    image="imjoy-team/imjoy-plugin-worker",
+    image="imjoy/imjoy-app-engine:latest",
     namespace="default",
     mount_dataset=None,
     home_pvc_claim=None,
@@ -134,7 +134,7 @@ def launch_pod(
             "containers": [
                 {
                     "image": image,
-                    "name": "imjoy-plugin-worker",
+                    "name": "imjoy/imjoy-app-engine:latest",
                     "args": [c for c in command.split(" ") if c.strip()],
                     "imagePullPolicy": "IfNotPresent",
                     "volumeMounts": [
