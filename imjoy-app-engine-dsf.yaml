@@ -1,0 +1,128 @@
+# version: v3.4.0
+
+# context defines the context of this Desired State File.
+# It is used to allow Helmsman identify which releases are managed by which DSF.
+# Therefore, it is important that each DSF uses a unique context.
+context: imjoy-app-engine # defaults to "production" if not provided
+
+# metadata -- add as many key/value pairs as you want
+metadata:
+  maintainer: "imjoy-team(imjoy.team@gmail.com)"
+  description: "example Desired State File for ImJoy App Engine."
+
+# paths to the certificate for connecting to the cluster
+# You can skip this if you use Helmsman on a machine with kubectl already connected to your k8s cluster.
+# you have to use exact key names here : 'caCrt' for certificate and 'caKey' for the key and caClient for the client certificate
+# certificates:
+#caClient: "gs://mybucket/client.crt" # GCS bucket path
+#caCrt: "s3://mybucket/ca.crt" # S3 bucket path
+#caKey: "../ca.key" # valid local file relative path
+
+settings:
+  kubeContext: "microk8s" # will try connect to this context first, if it does not exist, it will be created using the details below
+  #username: "admin"
+  #password: "$K8S_PASSWORD" # the name of an environment variable containing the k8s password
+  #clusterURI: "$SET_URI" # the name of an environment variable containing the cluster API
+  #clusterURI: "https://192.168.99.100:8443" # equivalent to the above
+  #storageBackend: "secret"
+  #slackWebhook:  "$slack" # or your slack webhook url
+  #reverseDelete: false # reverse the priorities on delete
+  #### to use bearer token:
+  #  bearerToken: true
+  #  clusterURI: "https://kubernetes.default"
+  # globalHooks:
+  #   successCondition: "Initialized"
+  #   deleteOnSuccess: true
+  #   postInstall: "job.yaml"
+  globalMaxHistory: 5
+
+# define your environments and their k8s namespaces
+namespaces:
+  production:
+    protected: true
+    limits:
+      - type: Container
+        default:
+          cpu: "1000m"
+          memory: "2048Mi"
+        defaultRequest:
+          cpu: "1000m"
+          memory: "2048Mi"
+      - type: Pod
+        max:
+          memory: "2048Mi"
+  staging:
+    protected: false
+    labels:
+      env: "staging"
+    # quotas:
+    #   limits.cpu: "10"
+    #   limits.memory: "20Gi"
+    #   pods: 25
+    #   requests.cpu: "10"
+    #   requests.memory: "30Gi"
+    #   customQuotas:
+    #     - name: "requests.nvidia.com/gpu"
+    #       value: "2"
+
+# define any private/public helm charts repos you would like to get charts from
+# syntax: repo_name: "repo_url"
+# only private repos hosted in s3 buckets are now supported
+helmRepos:
+  jetstack: "https://charts.jetstack.io"
+  # t83714: "https://t83714.github.io/docker-registry-mirror"
+# define the desired state of your applications helm charts
+# each contains the following:
+
+apps:
+  cert-manager:
+    namespace: "production" # maps to the namespace as defined in namespaces above
+    enabled: true # change to false if you want to delete this app release empty: false:
+    chart: "jetstack/cert-manager" # changing the chart name means delete and recreate this chart
+    version: "v1.3.1" # chart version
+    ### Optional values below
+    valuesFile: "" # leaving it empty uses the default chart values
+    test: false
+    protected: true
+    priority: -3
+    wait: true
+    hooks:
+      successCondition: "Complete"
+      successTimeout: "90s"
+      deleteOnSuccess: true
+      # preInstall: "https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.crds.yaml"
+    set:
+      "installCRDs": true
+
+  # docker-registry:
+  #   namespace: "production" # maps to the namespace as defined in namespaces above
+  #   enabled: true # change to false if you want to delete this app release empty: false:
+  #   chart: "t83714/docker-registry-mirror" # changing the chart name means delete and recreate this chart
+  #   version: "1.10.3" # chart versio
+  #   set:
+  #     storage: s3
+  #     secrets.s3.accessKey: imjoy
+  #     secrets.s3.secretKey: Nbj2cbcUDGGy7QNS8RjCwMrNRXrp2Ms7UXeF
+  #     s3.region: EU
+  #     s3.regionEndpoint: http://minio-s3:9000
+  #     s3.bucket: docker-registry
+  #     s3.secure: false
+  #     service.port: 5000
+  #     service.nodePort: 31822 # only valid when using NodePort
+
+
+  imjoy-app-engine:
+    namespace: "production" # maps to the namespace as defined in namespaces above
+    enabled: true # change to false if you want to delete this app release empty: false:
+    chart: "charts/imjoy-app-engine" # changing the chart name means delete and recreate this chart
+    version: "0.1.0" # chart version
+    ### Optional values below
+    # valuesFile: ""
+    # test: false
+    # priority: -2
+    # noHooks: false
+    # timeout: 300
+    # maxHistory: 4
+    # additional helm flags for this release
+    # helmFlags:
+    #   - "--devel"

@@ -16,9 +16,9 @@ ingressController:
   defaultCert: "- ' '"
 
 certManager:
-  enabled: true
-cert-manager:
-  installCRDs: false
+  enabled: false
+# cert-manager:
+#   installCRDs: true
 
 minioS3:
   enabled: true
@@ -29,7 +29,6 @@ minioS3:
 
 imjoyCoreServer:
   enabled: true
-  basePath: /
   replicaCount: 1
   jwtSecret: F3eckV4uR5Q7KfNP3FqTVGuQA3wjeGAm
   allowOrigins: "*"

@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: IfNotPresent
           image: {{ .Values.dockerImage | quote }}
           command: ["python3"]
-          args: ["-m", "imjoy", "--serve", "--port=4000", "--base-path={{- .Values.imjoyCoreServer.basePath }}", "--host=0.0.0.0", "--allow-origin='*'"]
+          args: ["-m", "imjoy", "--serve", "--port=4000", "--host=0.0.0.0", "--allow-origin='*'"]
           env:
             - name: AUTH0_DOMAIN
               value: {{ .Values.imjoyCoreServer.auth0Domain | quote }}
@@ -54,7 +54,7 @@ spec:
           livenessProbe:
             failureThreshold: 10
             httpGet:
-              path: "{{- .Values.imjoyCoreServer.basePath }}/liveness"
+              path: "/liveness"
               port: http
               scheme: HTTP
             initialDelaySeconds: 15

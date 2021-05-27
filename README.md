@@ -1,153 +1,110 @@
-# Deploy ImJoy App Engine Server to K8s
+[![GitHub version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=gh&type=6&v=v3.7.0&x2=0)](https://github.com/Praqma/helmsman/releases) [![CircleCI](https://circleci.com/gh/Praqma/helmsman/tree/master.svg?style=svg)](https://circleci.com/gh/Praqma/helmsman/tree/master)
 
-Useful links:
- * k8s cheatsheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+![helmsman-logo](docs/images/helmsman.png)
 
-## Create a volume
+> Helmsman v3.0.0 works only with Helm versions >=3.0.0. For older Helm versions, use Helmsman v1.x
 
-Create a directory, e.g. /mnt/data, then change it in the imjoy-config-map.yml
+# What is Helmsman?
 
-Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
-## Setup dashboard
-```
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
-```
+Helmsman is a Helm Charts (k8s applications) as Code tool which allows you to automate the deployment/management of your Helm charts from version controlled code.
 
-### Create service account
-```
-kubectl apply -f ../service-account.yml
-kubectl get serviceaccount
-```
+# How does it work?
 
-### Visit dashboard
+Helmsman uses a simple declarative [TOML](https://github.com/toml-lang/toml) file to allow you to describe a desired state for your k8s applications as in the [example toml file](https://github.com/Praqma/helmsman/blob/master/examples/example.toml).
+Alternatively YAML declaration is also acceptable [example yaml file](https://github.com/Praqma/helmsman/blob/master/examples/example.yaml).
 
-Get the token:
-```
-kubectl get secrets
-kubectl describe secret imjoy-service-account-token-z74fg
-```
+The desired state file (DSF) follows the [desired state specification](https://github.com/Praqma/helmsman/blob/master/docs/desired_state_specification.md).
 
-Run the following command to start the proxy:
-```
-kubectl proxy
-```
+Helmsman sees what you desire, validates that your desire makes sense (e.g. that the charts you desire are available in the repos you defined), compares it with the current state of Helm and figures out what to do to make your desire come true.
 
-Go to http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+To plan without executing:
+``` $ helmsman -f example.toml ```
 
-And login with the token.
+To plan and execute the plan:
+``` $ helmsman --apply -f example.toml ```
 
-### Deploy an ingress controller
+To show debugging details:
+``` $ helmsman --debug --apply -f example.toml ```
 
-```
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/cloud/deploy.yaml
+To run a dry-run:
+``` $ helmsman --debug --dry-run -f example.toml ```
 
-# verify the installation
-kubectl get pods -n ingress-nginx \
-  -l app.kubernetes.io/name=ingress-nginx --watch
-```
+To limit execution to specific application:
+``` $ helmsman --debug --dry-run --target artifactory -f example.toml ```
 
-Detect installed controller version
-```
-POD_NAMESPACE=default
-POD_NAME=$(kubectl get pods -n $POD_NAMESPACE -l app.kubernetes.io/name=ingress-nginx --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+# Features
 
-kubectl exec -it $POD_NAME -n $POD_NAMESPACE -- /nginx-ingress-controller --version
-```
+- **Built for CD**: Helmsman can be used as a docker image or a binary.
+- **Applications as code**: describe your desired applications and manage them from a single version-controlled declarative file.
+- **Suitable for Multitenant Clusters**: deploy Tiller in different namespaces with service accounts and TLS (versions 1.x).
+- **Easy to use**: deep knowledge of Helm CLI and Kubectl is NOT mandatory to use Helmsman.
+- **Plan, View, apply**: you can run Helmsman to generate and view a plan with/without executing it.
+- **Portable**: Helmsman can be used to manage charts deployments on any k8s cluster.
+- **Protect Namespaces/Releases**: you can define certain namespaces/releases to be protected against accidental human mistakes.
+- **Define the order of managing releases**: you can define the priorities at which releases are managed by helmsman (useful for dependencies).
+- **Idempotency**: As long your desired state file does not change, you can execute Helmsman several times and get the same result.
+- **Continue from failures**: In the case of partial deployment due to a specific chart deployment failure, fix your helm chart and execute Helmsman again without needing to rollback the partial successes first.
 
-Ref: https://kubernetes.github.io/ingress-nginx/deploy/
+# Install
 
+## From binary
 
+Please make sure the following are installed prior to using `helmsman` as a binary (the docker image contains all of them):
 
-### Deploy ImJoy
+- [kubectl](https://github.com/kubernetes/kubectl)
+- [helm](https://github.com/helm/helm) (helm >=v2.10.0 for `helmsman` >= 1.6.0, helm >=v3.0.0 for `helmsman` >=v3.0.0)
+- [helm-diff](https://github.com/databus23/helm-diff) (`helmsman` >= 1.6.0)
 
-Build docker image
-```
-docker build ./imjoy-app-engine -t imjoy-team/imjoy-app-engine
-docker build ./imjoy-worker -t imjoy-team/imjoy-worker
-```
+If you use private helm repos, you will need either `helm-gcs` or `helm-s3` plugin or you can use basic auth to authenticate to your repos. See the [docs](https://github.com/Praqma/helmsman/blob/master/docs/how_to/helm_repos) for details.
 
-Install
-```
-helm install imjoy-app-engine ./charts/imjoy-app-engine/
-```
-Upgrade
+Check the [releases page](https://github.com/Praqma/Helmsman/releases) for the different versions.
 
-```
-helm upgrade imjoy-app-engine ./charts/imjoy-app-engine/
+```sh
+# on Linux
+curl -L https://github.com/Praqma/helmsman/releases/download/v3.7.0/helmsman_3.6.10_linux_amd64.tar.gz | tar zx
+# on MacOS
+curl -L https://github.com/Praqma/helmsman/releases/download/v3.7.0/helmsman_3.6.10_darwin_amd64.tar.gz | tar zx
+
+mv helmsman /usr/local/bin/helmsman
 ```
 
-Test with a imjoy worker pod
+## As a docker image
+
+Check the images on [dockerhub](https://hub.docker.com/r/praqma/helmsman/tags/)
+
+## As a package
+
+Helmsman has been packaged in Archlinux under `helmsman-bin` for the latest binary release, and `helmsman-git` for master.
+
+# Documentation
+
+> Documentation for Helmsman v1.x can be found at: [docs v1.x](https://github.com/Praqma/helmsman/tree/1.x/docs)
+
+- [How-Tos](https://github.com/Praqma/helmsman/blob/master/docs/how_to/).
+
+- [Desired state specification](https://github.com/Praqma/helmsman/blob/master/docs/desired_state_specification.md).
+
+- [CMD reference](https://github.com/Praqma/helmsman/blob/master/docs/cmd_reference.md)
+
+## Usage
+
+Helmsman can be used in three different settings:
+
+- [As a binary with a hosted cluster](https://github.com/Praqma/helmsman/blob/master/docs/how_to/settings).
+- [As a docker image in a CI system or local machine](https://github.com/Praqma/helmsman/blob/master/docs/how_to/deployments/ci.md) Always use a tagged docker image from [dockerhub](https://hub.docker.com/r/praqma/helmsman/) as the `latest` image can (at times) be unstable.
+- [As a docker image inside a k8s cluster](https://github.com/Praqma/helmsman/blob/master/docs/how_to/deployments/inside_k8s.md)
+
+# Contributing
+
+Pull requests, feedback/feature requests are welcome. Please check our [contribution guide](CONTRIBUTION.md).
+
+
+
+## Steps to install ImJoy App Engine
+
 ```
-kubectl run -it testimjoyworker --image=imjoy-team/imjoy-test-worker --image-pull-policy=Never --restart=Never --rm
-```
-You should see the following:
-```
-Generated token: imjoy@eyJhbGci...
-echo: a message
-```
-
-To start an interactive session:
-```
-kubectl run -it testimjoyworker --image=imjoy-team/imjoy-test-worker --image-pull-policy=Never bin/bash --restart=Never --rm
-
-# run in the command prompt
-wget http://imjoy-app-engine
-```
-
-
-
-
-### Debugging with a test pod
-
-```
-kubectl run -it testpod --image=alpine bin/ash --restart=Never --rm
-```
-
-This will allow us to test the pods in the same cluster, e.g.:
-```
-wget imjoy-app-engine
-```
-
-### Support mounting datasets from s3
-
-```
-kubectl apply -f https://raw.githubusercontent.com/IBM/dataset-lifecycle-framework/master/release-tools/manifests/dlf.yaml
-kubectl label namespace default monitor-pods-datasets=enabled
-
-kubectl apply -f example-dataset.yml
-```
-
-Ref: https://github.com/datashim-io/datashim
-
-
-## Delete all the imjoy plugin runner pods
-```bash
-kubectl delete pod -l type=imjoy-plugin-runner
-```
-
-
-## Setup ingress
-
-
-Make sure in the ingress.yaml file we have `spec.ingressClassName: public`.
-
-Ref: https://stackoverflow.com/a/67041204
-
-
-## Setup cert-manager
-
-Run the following command
-```
-kubectl get certificate
-```
-
-It should produce:
-```
-NAME                   READY   SECRET                 AGE
-imjoy-app-engine-tls   True    imjoy-app-engine-tls   2m53s
-```
-
-For more details run:
-```
-kubectl describe certificate imjoy-app-engine-tls
+sudo snap install microk8s --classic
+microk8s start # start the cluster
+microk8s enable helm3
+microk8s helm3 install --set imjoyHostName=engine.imjoy.io imjoy-app-engine ./charts/imjoy-app-engine
 ```
