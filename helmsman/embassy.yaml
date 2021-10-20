@@ -1,0 +1,4 @@
+settings:
+  kubeContext: embassy
+
+# PUT OVERWRITES HERE

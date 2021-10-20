@@ -1,0 +1,25 @@
+namespaces:
+  imjoy-app-engine:
+    protected: false
+  binderhub-staging:
+    protected: false
+  binderhub-production:
+    protected: false
+  daskgateway-staging:
+    protected: false
+  daskgateway-production:
+    protected: false
+  docker-registry:
+    protected: false
+  cert-manager:
+    protected: false
+  ingress-nginx:
+    protected: false
+  nginx-ingress:
+    protected: false
+  tritoninferenceserver:
+    protected: false
+  monitoring:
+    protected: false
+  nvidia-device-plugin:
+    protected: false
