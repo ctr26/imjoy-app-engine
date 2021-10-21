@@ -1,7 +1,5 @@
 namespaces:
-  imjoy-app-engine-production:
-    protected: true
-  imjoy-app-engine-staging:
+  imjoy-app-engine:
     protected: false
   binderhub-staging:
     protected: false
