@@ -18,7 +18,7 @@ jobs:
           username: imjoy
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.0
 
       - name: Build docker image
         id: docker_build
