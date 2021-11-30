@@ -25,10 +25,11 @@ helmRepos:
   ingress-nginx: "https://kubernetes.github.io/ingress-nginx"
   # trow: "https://trow.io"
   twuni: "https://helm.twun.io"
-  # triton: "https://helm.ngc.nvidia.com/nvidia"
+  nvidia-triton: "https://helm.ngc.nvidia.com/nvidia"
   triton: "https://ctr26.github.io/tritoninferenceserver/"
   prometheus-community: "https://prometheus-community.github.io/helm-charts"
   nvdp: "https://nvidia.github.io/k8s-device-plugin"
+  nvidia: "https://nvidia.github.io/gpu-operator"
   # imjoy: https://github.com/imjoy-team/imjoy-app-engine/charts
 
 settings:
@@ -148,6 +149,14 @@ apps:
     chart: "nvdp/nvidia-device-plugin"
     enabled: true
     version: "0.10.0"
+    group: "production"
+
+  nvidia-gpu-operator:
+    name: "nvidia-gpu-operator"
+    namespace: "nvidia-gpu-operator"
+    chart: "nvidia/gpu-operator"
+    enabled: true
+    version: "1.8.2"
     group: "production"
 
   # prometheus:
