@@ -23,3 +23,5 @@ namespaces:
     protected: false
   nvidia-device-plugin:
     protected: false
+  nvidia-gpu-operator:
+    protected: false

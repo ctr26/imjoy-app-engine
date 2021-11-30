@@ -135,6 +135,7 @@ apps:
     name: "tritoninferenceserver"
     namespace: "tritoninferenceserver"
     chart: "triton/tritoninferenceserver"
+    # chart: "nvidia-triton/tritoninferenceserver"
     group: "production"
     enabled: true
     version: "1.0.0"
@@ -146,7 +147,7 @@ apps:
     namespace: "nvidia-device-plugin"
     chart: "nvdp/nvidia-device-plugin"
     enabled: true
-    version: "0.9.0"
+    version: "0.10.0"
     group: "production"
 
   # prometheus:
