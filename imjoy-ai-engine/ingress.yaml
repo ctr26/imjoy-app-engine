@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hyphaserver
+  namespace: hyphaserver
+  # annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - host: "imjoy.duckdns.org"
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: hyphaserver
+            port:
+              number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hyphaserver
+  namespace: hyphaserver
+spec:
+  selector:
+    app: hyphaserver
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: "http"
