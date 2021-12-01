@@ -25,3 +25,7 @@ namespaces:
     protected: false
   nvidia-gpu-operator:
     protected: false
+  minio-operator:
+    protected: false
+  minio:
+    protected: false

@@ -30,6 +30,9 @@ helmRepos:
   prometheus-community: "https://prometheus-community.github.io/helm-charts"
   nvdp: "https://nvidia.github.io/k8s-device-plugin"
   nvidia: "https://nvidia.github.io/gpu-operator"
+  minio-operator: "https://operator.min.io/"
+  minio: "https://charts.min.io/"
+
   # imjoy: https://github.com/imjoy-team/imjoy-app-engine/charts
 
 settings:
@@ -100,19 +103,19 @@ apps:
       postUpgrade: "cert-managment/cluster_issuer/values.yaml"
       postInstall: "cert-managment/cluster_issuer/values.yaml"
 
-  docker-registry:
-    name: "docker-registry"
-    namespace: "docker-registry"
-    chart: "twuni/docker-registry"
-    group: "production"
-    enabled: true
-    version: "1.11.0"
-    set:
-      proxy:enabled: true
-      proxy.username: "$CI_REGISTRY_USER"
-      proxy.password: "$CI_REGISTRY_PASSWORD"
-    valuesFiles:
-      - docker-registry/values.yaml 
+  # docker-registry:
+  #   name: "docker-registry"
+  #   namespace: "docker-registry"
+  #   chart: "twuni/docker-registry"
+  #   group: "production"
+  #   enabled: true
+  #   version: "1.11.0"
+  #   set:
+  #     proxy:enabled: true
+  #     proxy.username: "$CI_REGISTRY_USER"
+  #     proxy.password: "$CI_REGISTRY_PASSWORD"
+  #   valuesFiles:
+  #     - docker-registry/values.yaml 
 
   imjoy-app-engine:
     namespace: "imjoy-app-engine" # maps to the namespace as defined in namespaces above
@@ -159,6 +162,7 @@ apps:
     version: "1.8.2"
     group: "production"
 
+
   # prometheus:
   #   name: "prometheus"
   #   namespace: "tritoninferenceserver"
@@ -191,4 +195,19 @@ apps:
     enabled: true
     version: "3.35.0"
     valuesFiles:
-      - ingress/nginx-ingress.yaml 
+      - ingress/nginx-ingress.yaml
+
+  minio:
+    name: "minio"
+    namespace: "minio"
+    chart: "minio/minio"
+    group: "production"
+    # wait: true
+    enabled: true
+    timeout: 4800
+    version: "3.3.0"
+    valuesFiles:
+        - minio/values.yaml
+    set:
+      rootUser: rootuser
+      rootPassword: rootpass123

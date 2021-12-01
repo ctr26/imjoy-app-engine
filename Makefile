@@ -20,6 +20,13 @@ triton.deploy.prod.minikube:
 
 
 
+minio.deploy.prod.denbi:
+	helmsman --apply --debug --target minio -f helmsman.yaml -f helmsman/production.yaml -f helmsman/denbi.yaml --always-upgrade
+
+
+denbi.k8s.jump:
+	sshuttle --dns -NHr denbi-jumphost-01.bihealth.org 0/0
+
 
 # load_env:
 # 	if [ -f .env ]; then
