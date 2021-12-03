@@ -1,0 +1,38 @@
+# # Known good
+# replicaCount: 1
+
+# image:
+#   imageName: nvcr.io/nvidia/tritonserver:21.08-py3
+#   # pullPolicy: IfNotPresent
+#   # modelRepositoryPath: s3://https://uk1s3.embassy.ebi.ac.uk:443/model-repository
+#   numGpus: 1
+# service:
+#   type: ClusterIP
+# ---
+
+replicaCount: 1
+
+image:
+  imageName: nvcr.io/nvidia/tritonserver:21.10-py3
+  pullPolicy: IfNotPresent
+  modelRepositoryPath: s3://https://uk1s3.embassy.ebi.ac.uk:443/model-repository
+  numGpus: 1
+service:
+  type: ClusterIP
+
+#  32gb memory 
+
+#  ENv variables
+
+# TF_FORCE_GPU_ALLOW_GROWTH: "true"
+# MODEL_SNAPSHOTS_DIRECTORY: /model-snapshots
+
+# aws key: 2J00NV4L2B6QC5707X6T
+# aws secret: DhIydOruIFKcDpoqnVYVb4127DcyizSpkO8JkpU3
+# DhIydOruIFKcDpoqnVYVb4127DcyizSpkO8JkpU3
+
+
+# Add more memory
+# Add extra args
+
+# command: bash -c "apt update -yq && apt install libgl1-mesa-glx -y && tritonserver --model-repository=/models --log-verbose=1 --model-control-mode=poll --exit-on-error=false --repository-poll-secs=60"
