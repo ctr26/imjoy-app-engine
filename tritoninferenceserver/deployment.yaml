@@ -48,29 +48,49 @@ spec:
       securityContext:
         # fsGroup: 1000
         runAsUser: 0
+      initContainers:
+        - name: model-copy-s3
+          # image: amazon/aws-cli
+          image: amazon/aws-cli
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              aws --no-sign-request --endpoint-url https://uk1s3.embassy.ebi.ac.uk s3 sync s3://model-repository/ /model-repository
+          volumeMounts:
+            - mountPath: /model-repository
+              name: model-repository
       containers:
         - name: tritoninferenceserver
           image: nvcr.io/nvidia/tritonserver:21.10-py3
           volumeMounts:
             - mountPath: /dev/shm
               name: dshm
-          # env:
-          # - name: TF_FORCE_GPU_ALLOW_GROWTH
-          #   value: "true"
-          # - name: MODEL_SNAPSHOTS_DIRECTORY
-            # value: "/model-snapshots"/
+            - mountPath: /model-repository
+              name: model-repository
+            - mountPath: /model-snapshots
+              name: model-snapshots
+          env:
+          - name: TF_FORCE_GPU_ALLOW_GROWTH
+            value: "true"
+          - name: MODEL_SNAPSHOTS_DIRECTORY
+            value: "/model-snapshots"
           imagePullPolicy: IfNotPresent
           resources:
+            requests:
+              nvidia.com/gpu: "1"
+              memory: "32Gi"
+              cpu: "4"
             limits:
               nvidia.com/gpu: "1"
               memory: "32Gi"
               cpu: "4"
+          command: ["/bin/sh"]
           args:
-            - tritonserver
-            - --model-store=s3://https://uk1s3.embassy.ebi.ac.uk:443/model-repository
-            - --model-control-mode=poll
-            - --repository-poll-secs=60
-            - --exit-on-error=false
+            - -c
+            - >-
+              apt update -yq &&
+              apt install libgl1-mesa-glx -y &&
+              tritonserver --model-store=/model-repository --log-verbose=1 --model-control-mode=poll --repository-poll-secs=60 --exit-on-error=false
           ports:
             - containerPort: 8000
               name: http
@@ -82,8 +102,11 @@ spec:
           #   postStart:
           #     exec:
           #       command:
-          #          - |
-          #           bash -c "apt update -yq && apt install libgl1-mesa-glx -y"
+          #         - >
+          #           /bin/sh -c apt update -yq && apt install libgl1-mesa-glx -y
+                # command:
+                  #  - |
+                    # bash -c "apt update -yq && apt install libgl1-mesa-glx -y"
           # livenessProbe:
           #   httpGet:
           #     path: /v2/health/live
@@ -98,4 +121,7 @@ spec:
         - name: dshm
           emptyDir:
               medium: Memory
-
+        - name: model-repository
+          emptyDir: {}
+        - name: model-snapshots
+          emptyDir: {}
