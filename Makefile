@@ -60,7 +60,7 @@ denbi.k8s.jump:
 	sshuttle --dns -NHr denbi-jumphost-01.bihealth.org 0/0
 
 
-# load_env:
-# 	if [ -f .env ]; then
-# 		export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
-# 	fi
+load_env:
+	if [ -f .env ]; then
+		export $(echo $(cat .env | sed 's/#.*//g'| xargs) | envsubst)
+	fi
