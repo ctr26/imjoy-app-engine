@@ -3,13 +3,22 @@ include .env
 include secrets.env
 export
 BASEDIR = $(shell pwd)
+
+deployment_kind="production"
+target=""
+cluster="minikube"
+
 # SOURCE:=$(shell source secrets.env)
 # include .secrets
+all: deploy.prod
+
 deploy.prod:
 	helmsman --apply --debug --group production-f helmsman.yaml -f helmsman/production.yaml
 deploy.staging:
 	helmsman --apply --debug --group production -f helmsman.yaml -f helmsman/production.yaml
-deploy.triton:
+
+
+deploy:
 
 deploy.minikube:
 	helmsman --apply --debug --group staging-f helmsman.yaml -f helmsman/staging.yaml -f helmsman/minikube.yaml
