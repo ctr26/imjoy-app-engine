@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hyphaserver
+  namespace: hyphaserver
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  rules:
+  - host: "imjoy.duckdns.org"
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: hyphaserver
+            port:
+              number: 80
+  tls:
+    - hosts:
+      - "imjoy.duckdns.org"
+      secretName: tls-secret
+# ---
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: IngressRoute
+# metadata:
+#   name: hyphaserver
+#   namespace: hyphaserver
+# spec:
+#   entryPoints:
+#     - websecure
+#   routes:
+#     - match: Host(`imjoy.duckdns.org`)
+#       kind: Rule
+#       services:
+#         - name: hyphaserver
+#           port: 80
+#   tls:
+#     secretName: tls-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hyphaserver
+  namespace: hyphaserver
+spec:
+  selector:
+    app: hyphaserver
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: "http"
