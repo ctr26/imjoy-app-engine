@@ -18,8 +18,6 @@ deploy.staging:
 	helmsman --apply --debug --group production -f helmsman.yaml -f helmsman/production.yaml
 
 
-deploy:
-
 deploy.minikube:
 	helmsman --apply --debug --group staging-f helmsman.yaml -f helmsman/staging.yaml -f helmsman/minikube.yaml
 deploy.prod.minikube:

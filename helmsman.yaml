@@ -158,7 +158,7 @@ apps:
     name: "nvidia-gpu-operator"
     namespace: "nvidia-gpu-operator"
     chart: "nvidia/gpu-operator"
-    enabled: true
+    enabled: false
     version: "1.8.2"
     group: "production"
 
